@@ -31,6 +31,8 @@ function onInputCountryName(e) {
     
       if (data.length > 10) {
         Notify.info("Too many matches found. Please enter a more specific name.")
+        countriesListEl.innerHTML = '';
+        countryContainerEl.innerHTML = '';
       } else if (data.length > 2 && data.length<10){
         countriesListEl.innerHTML = createCountryList(data);
         countryContainerEl.innerHTML = '';
