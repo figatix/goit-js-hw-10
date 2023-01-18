@@ -18,3 +18,18 @@ body {
   max-width: 320px;
   margin-bottom: 16px;
 }
+
+.country-item{
+  list-style: none;
+  margin:10px 0;
+  
+}
+
+.country-item__name{
+  font-style: italic;
+  text-align: center;
+}
+
+.country-item__thumb-flag{
+  width: 50px;
+}
