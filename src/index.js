@@ -7,35 +7,33 @@ const debounce = require('lodash.debounce');
 
 const DEBOUNCE_DELAY = 300;
 
-
-
-// console.log(fetchCountries("Ukraine"));
-
 const inputEl = document.querySelector('input#search-box');
 const countriesListEl = document.querySelector('.country-list')
 const countryContainerEl = document.querySelector('.country-info')
 
+function clearListAndContainer() {
+  countriesListEl.innerHTML = '';
+  countryContainerEl.innerHTML = '';
+}
+
 function onInputCountryName(e) {
+  const query = e.target.value.trim();
 
-  const query = e.target.value.trim()
-  console.log(query);
-  // countriesListEl.innerHTML = '';
-  // countryContainerEl.innerHTML = '';
-
-  if (e.target.value === '') {
+  if (query === '') {
+    clearListAndContainer();
     return
   }
 
   fetchCountries(query)
     .then(data => {
-    
       if (data.length > 10) {
         Notify.info("Too many matches found. Please enter a more specific name.")
-        countriesListEl.innerHTML = '';
-        countryContainerEl.innerHTML = '';
-      } else if (data.length > 2 && data.length<10){
+        clearListAndContainer();
+
+      } else if (data.length >= 2 && data.length<=10){
         countriesListEl.innerHTML = createCountryList(data);
         countryContainerEl.innerHTML = '';
+
       } else {
         countriesListEl.innerHTML = '';
         countryContainerEl.innerHTML = createCountryInfo(data)
@@ -45,12 +43,10 @@ function onInputCountryName(e) {
     .catch(err => {
     if (err.message === '404') {
       Notify.failure('Oops, there is no country with that name')
+      clearListAndContainer();
     }
     console.log(err);
   })
-  
-  
-  
 }
 
 inputEl.addEventListener('input', debounce(onInputCountryName, DEBOUNCE_DELAY))
