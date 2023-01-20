@@ -14,6 +14,7 @@ const countryContainerEl = document.querySelector('.country-info')
 function clearListAndContainer() {
   countriesListEl.innerHTML = '';
   countryContainerEl.innerHTML = '';
+  countryContainerEl.classList.add('is-hidden')
 }
 
 function onInputCountryName(e) {
@@ -25,28 +26,32 @@ function onInputCountryName(e) {
   }
 
   fetchCountries(query)
-    .then(data => {
-      if (data.length > 10) {
-        Notify.info("Too many matches found. Please enter a more specific name.")
-        clearListAndContainer();
+    .then(renderCountries)
+    .catch(fetchError)
+}
 
-      } else if (data.length >= 2 && data.length<=10){
-        countriesListEl.innerHTML = createCountryList(data);
-        countryContainerEl.innerHTML = '';
+function renderCountries(data) {
+  if (data.length > 10) {
+    Notify.info("Too many matches found. Please enter a more specific name.")
+    clearListAndContainer();
 
-      } else {
-        countriesListEl.innerHTML = '';
-        countryContainerEl.innerHTML = createCountryInfo(data)
-      }
-    console.log(data);
-  })
-    .catch(err => {
-    if (err.message === '404') {
-      Notify.failure('Oops, there is no country with that name')
-      clearListAndContainer();
-    }
-    console.log(err);
-  })
+  } else if (data.length >= 2 && data.length<=10){
+    countriesListEl.innerHTML = createCountryList(data);
+    countryContainerEl.innerHTML = '';
+    countryContainerEl.classList.add('is-hidden')
+
+  } else {
+    countriesListEl.innerHTML = '';
+    countryContainerEl.innerHTML = createCountryInfo(data)
+    countryContainerEl.classList.remove('is-hidden')
+  }
+}
+
+function fetchError(err) {
+  if (err.message === '404') {
+    Notify.failure('Oops, there is no country with that name')
+    clearListAndContainer();
+  }
 }
 
 inputEl.addEventListener('input', debounce(onInputCountryName, DEBOUNCE_DELAY))
